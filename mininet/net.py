@@ -98,7 +98,7 @@ from math import ceil
 
 from mininet.cli import CLI
 from mininet.log import info, error, debug, output, warn
-from mininet.node import ( Node, Host, OVSKernelSwitch, DefaultController,
+from mininet.node import ( Node, Host, OVSKernelSwitch, DefaultController, RemoteController,
                            Controller )
 from mininet.nodelib import NAT
 from mininet.link import Link, Intf
@@ -114,7 +114,7 @@ class Mininet( object ):
     "Network emulation with hosts spawned in network namespaces."
 
     def __init__( self, topo=None, switch=OVSKernelSwitch, host=Host,
-                  controller=DefaultController, link=Link, intf=Intf,
+                  controller=None, link=Link, intf=Intf,
                   build=True, xterms=False, cleanup=False, ipBase='10.0.0.0/8',
                   inNamespace=False,
                   autoSetMacs=False, autoStaticArp=False, autoPinCpus=False,
@@ -542,6 +542,7 @@ class Mininet( object ):
         for controller in self.controllers:
             info( controller.name + ' ')
             controller.start()
+        info('*** Not gonna add any controllers')
         info( '\n' )
         info( '*** Starting %s switches\n' % len( self.switches ) )
         for switch in self.switches:

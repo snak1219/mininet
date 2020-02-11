@@ -64,7 +64,7 @@ def exampleAllHosts( vlan ):
     # vlan (type: int): VLAN ID to be used by all hosts
 
     # Start a basic network using our VLANHost
-    topo = SingleSwitchTopo( k=2 )
+    topo = VLANStarTopo( k=2 )
     net = Mininet( host=host, topo=topo )
     net.start()
     CLI( net )
@@ -118,7 +118,7 @@ if __name__ == '__main__':
                "or 'vconfig' in Fedora\n" )
         exit()
 
-    if len( sys.argv ) >= 2:
-        exampleAllHosts( vlan=int( sys.argv[ 1 ] ) )
+    if len(sys.argv) >= 2:
+        exampleAllHosts(vlan=int(sys.argv[1]))
     else:
         exampleCustomTags()
