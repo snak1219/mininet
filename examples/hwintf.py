@@ -46,15 +46,16 @@ class VLANHost(Host):
 hosts = {'vlan': VLANHost}
 
 
-def exampleAllHosts(vlan):
+def exampleAllHosts(vlanList):
     """Simple example of how VLANHost can be used in a script"""
     # This is where the magic happens...
-    host = partial(VLANHost, vlan=vlan)
-    # vlan (type: int): VLAN ID to be used by all hosts
+    hostList = []
+    for eachVlan in vlanList:
+        hostList.append(partial(VLANHost, vlan=int(eachVlan)))
 
     # Start a basic network using our VLANHost
     topo = SingleSwitchReversedTopo(k=5)
-    net = Mininet(host=host, topo=topo)
+    net = Mininet(host=hostList, topo=topo)
     return net
 
 
@@ -85,9 +86,17 @@ if __name__ == '__main__':
 
     info('*** Creating network\n')
     if len(sys.argv) >= 2:
-        net = exampleAllHosts(vlan=int(sys.argv[2]))
-    else:
-        net = Mininet(topo=SingleSwitchReversedTopo(k=1))
+        if len(sys.argv) > 1:
+            vlanList = []
+            # sys.argv[0] is the program filename, slice it off
+            # sys.argv[1] is the hw_intf_name, slice it off
+            for element in sys.argv[2:]:
+                vlanList.append(element)
+    print("\n\n-------Adding VLANS: ", vlanList, "-------\n\n")
+    if len(sys.argv) >= 2:
+        print("Adding Vlans: ", sys.argv[2])
+        net = exampleAllHosts(vlanList)
+        # net = exampleAllHosts(vlan=int(sys.argv[2]))
 
     switch = net.switches[0]
     info('*** Adding hardware interface', intfName, 'to switch',

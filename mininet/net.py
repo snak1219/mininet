@@ -138,6 +138,7 @@ class Mininet( object ):
                each additional switch in the net if inNamespace=False"""
         self.topo = topo
         self.switch = switch
+        # Add a list of hosts
         self.host = host
         self.controller = controller
         self.link = link
@@ -222,7 +223,10 @@ class Mininet( object ):
         self.nextIP += 1
         defaults.update( params )
         if not cls:
-            cls = self.host
+            if len(self.host) != 0:
+                cls = self.host[0]
+            if len(self.host) > 1:
+                self.host = self.host[1:]
         h = cls( name, **defaults )
         self.hosts.append( h )
         self.nameToNode[ name ] = h

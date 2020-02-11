@@ -69,13 +69,14 @@ from mininet.link import Link, Intf, TCIntf, OVSIntf
 from re import findall
 from distutils.version import StrictVersion
 
-class Node( object ):
+
+class Node(object):
     """A virtual network node is simply a shell in a network namespace.
        We communicate with it using pipes."""
 
     portBase = 0  # Nodes always start with eth0/port0, even in OF 1.0
 
-    def __init__( self, name, inNamespace=True, **params ):
+    def __init__(self, name, inNamespace=True, **params):
         """name: name of node
            inNamespace: in network namespace?
            privateDirs: list of private directory strings or tuples
@@ -84,12 +85,12 @@ class Node( object ):
         # Make sure class actually works
         self.checkSetup()
 
-        self.name = params.get( 'name', name )
-        self.privateDirs = params.get( 'privateDirs', [] )
-        self.inNamespace = params.get( 'inNamespace', inNamespace )
+        self.name = params.get('name', name)
+        self.privateDirs = params.get('privateDirs', [])
+        self.inNamespace = params.get('inNamespace', inNamespace)
 
         # Python 3 complains if we don't wait for shell exit
-        self.waitExited = params.get( 'waitExited', Python3 )
+        self.waitExited = params.get('waitExited', Python3)
 
         # Stash configuration parameters for future reference
         self.params = params
@@ -100,9 +101,9 @@ class Node( object ):
         self.nameToIntf = {}  # dict of interface names to Intfs
 
         # Make pylint happy
-        ( self.shell, self.execed, self.pid, self.stdin, self.stdout,
-            self.lastPid, self.lastCmd, self.pollOut ) = (
-                None, None, None, None, None, None, None, None )
+        (self.shell, self.execed, self.pid, self.stdin, self.stdout,
+            self.lastPid, self.lastCmd, self.pollOut) = (
+                None, None, None, None, None, None, None, None)
         self.waiting = False
         self.readbuf = ''
 
@@ -142,46 +143,46 @@ class Node( object ):
         # bash -i: force interactive
         # -s: pass $* to shell, and make process easy to find in ps
         # prompt is set to sentinel chr( 127 )
-        cmd = [ 'mnexec', opts, 'env', 'PS1=' + chr( 127 ),
-                'bash', '--norc', '--noediting',
-                '-is', 'mininet:' + self.name ]
+        cmd = ['mnexec', opts, 'env', 'PS1=' + chr(127),
+               'bash', '--norc', '--noediting',
+               '-is', 'mininet:' + self.name]
 
         # Spawn a shell subprocess in a pseudo-tty, to disable buffering
         # in the subprocess and insulate it from signals (e.g. SIGINT)
         # received by the parent
         self.master, self.slave = pty.openpty()
-        self.shell = self._popen( cmd, stdin=self.slave, stdout=self.slave,
-                                  stderr=self.slave, close_fds=False )
+        self.shell = self._popen(cmd, stdin=self.slave, stdout=self.slave,
+                                 stderr=self.slave, close_fds=False)
         # XXX BL: This doesn't seem right, and we should also probably
         # close our files when we exit...
-        self.stdin = os.fdopen( self.master, 'r' )
+        self.stdin = os.fdopen(self.master, 'r')
         self.stdout = self.stdin
         self.pid = self.shell.pid
         self.pollOut = select.poll()
-        self.pollOut.register( self.stdout )
+        self.pollOut.register(self.stdout)
         # Maintain mapping between file descriptors and nodes
         # This is useful for monitoring multiple nodes
         # using select.poll()
-        self.outToNode[ self.stdout.fileno() ] = self
-        self.inToNode[ self.stdin.fileno() ] = self
+        self.outToNode[self.stdout.fileno()] = self
+        self.inToNode[self.stdin.fileno()] = self
         self.execed = False
         self.lastCmd = None
         self.lastPid = None
         self.readbuf = ''
         # Wait for prompt
         while True:
-            data = self.read( 1024 )
-            if data[ -1 ] == chr( 127 ):
+            data = self.read(1024)
+            if data[-1] == chr(127):
                 break
             self.pollOut.poll()
         self.waiting = False
         # +m: disable job control notification
-        self.cmd( 'unset HISTFILE; stty -echo; set +m' )
+        self.cmd('unset HISTFILE; stty -echo; set +m')
 
-    def mountPrivateDirs( self ):
+    def mountPrivateDirs(self):
         "mount private directories"
         # Avoid expanding a string into a list of chars
-        assert not isinstance( self.privateDirs, BaseString )
+        assert not isinstance(self.privateDirs, BaseString)
         for directory in self.privateDirs:
             if isinstance( directory, tuple ):
                 # mount given private directory
