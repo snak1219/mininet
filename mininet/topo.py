@@ -13,6 +13,7 @@ setup for testing, and can even be emulated with the Mininet package.
 
 from mininet.util import irange, natural, naturalSeq
 
+
 class MultiGraph( object ):
     "Utility class to track nodes and edges - replaces networkx.MultiGraph"
 

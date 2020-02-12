@@ -61,9 +61,9 @@ from subprocess import Popen, PIPE
 from time import sleep
 
 from mininet.log import info, error, warn, debug
-from mininet.util import ( quietRun, errRun, errFail, moveIntf, isShellBuiltin,
-                           numCores, retry, mountCgroups, BaseString, decode,
-                           encode, getincrementaldecoder, Python3, which )
+from mininet.util import (quietRun, errRun, errFail, moveIntf, isShellBuiltin,
+                          numCores, retry, mountCgroups, BaseString, decode,
+                          encode, getincrementaldecoder, Python3, which)
 from mininet.moduledeps import moduleDeps, pathCheck, TUN
 from mininet.link import Link, Intf, TCIntf, OVSIntf
 from re import findall
@@ -122,18 +122,18 @@ class Node(object):
     outToNode = {}  # mapping of output fds to nodes
 
     @classmethod
-    def fdToNode( cls, fd ):
+    def fdToNode(cls, fd):
         """Return node corresponding to given file descriptor.
            fd: file descriptor
            returns: node"""
-        node = cls.outToNode.get( fd )
-        return node or cls.inToNode.get( fd )
+        node = cls.outToNode.get(fd)
+        return node or cls.inToNode.get(fd)
 
     # Command support via shell process in namespace
-    def startShell( self, mnopts=None ):
+    def startShell(self, mnopts=None):
         "Start a shell process for running commands"
         if self.shell:
-            error( "%s: shell is already running\n" % self.name )
+            error("%s: shell is already running\n" % self.name)
             return
         # mnexec: (c)lose descriptors, (d)etach from tty,
         # (p)rint pid, and run in (n)amespace
@@ -1133,9 +1133,11 @@ class OVSSwitch( Switch ):
         self.cmd( 'ifconfig', intf, 'up' )
         self.TCReapply( intf )
 
+
     def detach( self, intf ):
         "Disconnect a data port"
         self.vsctl( 'del-port', self, intf )
+
 
     def controllerUUIDs( self, update=False ):
         """Return ovsdb UUIDs for our controllers

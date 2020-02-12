@@ -55,7 +55,13 @@ def exampleAllHosts(vlanList):
 
     # Start a basic network using our VLANHost
     topo = SingleSwitchReversedTopo(k=5)
+    # Pass new switch config to this as well
     net = Mininet(host=hostList, topo=topo)
+    switch1 = net.switches[0]
+    # We need to tag each of these ports with each vlan in vlanList
+
+    # Once tagged, pass it back into net as new switch
+    # net = Mininet(host=hostList, topo=topo, switch=switch1)
     return net
 
 
@@ -92,13 +98,12 @@ if __name__ == '__main__':
             # sys.argv[1] is the hw_intf_name, slice it off
             for element in sys.argv[2:]:
                 vlanList.append(element)
-    print("\n\n-------Adding VLANS: ", vlanList, "-------\n\n")
     if len(sys.argv) >= 2:
-        print("Adding Vlans: ", sys.argv[2])
         net = exampleAllHosts(vlanList)
         # net = exampleAllHosts(vlan=int(sys.argv[2]))
 
     switch = net.switches[0]
+    _intf = Intf('s1-tagged', node=switch)
     info('*** Adding hardware interface', intfName, 'to switch',
          switch.name, '\n')
     _intf = Intf(intfName, node=switch)
